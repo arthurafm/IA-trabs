@@ -2,14 +2,12 @@ import numpy as np
 
 
 def compute_mse(b, w, data):
-    """
-    Calcula o erro quadratico medio
-    :param b: float - bias (intercepto da reta)
-    :param w: float - peso (inclinacao da reta)
-    :param data: np.array - matriz com o conjunto de dados, x na coluna 0 e y na coluna 1
-    :return: float - o erro quadratico medio
-    """
-    raise NotImplementedError  # substituir pelo seu codigo
+    square_error = 0
+    for case in data:
+        predicted_result = b + w*case[0]
+        square_error += pow(case[1] - predicted_result, 2)
+    mse = square_error / (data.size / 2)
+    return mse
 
 
 def step_gradient(b, w, data, alpha):
