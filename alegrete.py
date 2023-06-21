@@ -11,15 +11,16 @@ def compute_mse(b, w, data):
 
 
 def step_gradient(b, w, data, alpha):
-    """
-    Executa uma atualização por descida do gradiente  e retorna os valores atualizados de b e w.
-    :param b: float - bias (intercepto da reta)
-    :param w: float - peso (inclinacao da reta)
-    :param data: np.array - matriz com o conjunto de dados, x na coluna 0 e y na coluna 1
-    :param alpha: float - taxa de aprendizado (a.k.a. tamanho do passo)
-    :return: float,float - os novos valores de b e w, respectivamente
-    """
-    raise NotImplementedError  # substituir pelo seu codigo
+    derivative_w = 0
+    derivative_b = 0
+    for case in data:
+        derivative_w += (b + w*case[0] - case[1]) * case[0]
+        derivative_b += b + w*case[0] - case[1]
+    derivative_w *= (2/(data.size / 2))
+    derivative_b *= (2 / (data.size / 2))
+    w = w - alpha*derivative_w
+    b = b - alpha*derivative_b
+    return b, w
 
 
 def fit(data, b, w, alpha, num_iterations):
