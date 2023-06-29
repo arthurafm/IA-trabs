@@ -1,6 +1,6 @@
 # IA-trab1
 
-# Integrantes do grupo
+## Integrantes do grupo
 Arthur Alves Ferreira Melo - 00333985
 
 
