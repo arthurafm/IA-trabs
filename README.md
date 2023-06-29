@@ -2,6 +2,7 @@
 
 ## Integrantes do grupo
 Arthur Alves Ferreira Melo - 00333985
+Carlos Negri - 00333174
 
 
 TP1: https://colab.research.google.com/drive/1oa2sTWlHfHeJNQpv_Ajrr1RADIAxjMIu?usp=sharing
