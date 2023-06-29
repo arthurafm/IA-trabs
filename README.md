@@ -5,6 +5,7 @@ Arthur Alves Ferreira Melo - 00333985
 
 Carlos Negri - 00333174
 
+Thiago Parisotto Dias - 00313306
 
 TP1: https://colab.research.google.com/drive/1oa2sTWlHfHeJNQpv_Ajrr1RADIAxjMIu?usp=sharing
 
