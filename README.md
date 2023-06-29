@@ -1,12 +1,26 @@
 # IA-trab1
 
-1. Rede neural de uma camada -> Arthur, Thiago
-2. Tensorflow/Keras -> Carlos, Yasmin
+# Integrantes do grupo
+Arthur Alves Ferreira Melo - 00333985
+
 
 TP1: https://colab.research.google.com/drive/1oa2sTWlHfHeJNQpv_Ajrr1RADIAxjMIu?usp=sharing
 
 Resultados Tensorflow Docs
 https://docs.google.com/document/d/1hkGwCSpr8FMLddkcG_TNUVa3YwbxMDg2bbHlIo9phNQ/edit?usp=sharing
+
+## Rede Neural de Uma Camada
+Para as funções desenvolvidas, foram setados os valores:
+-b = 1.16
+-w = -3.45
+-alpha = 0.01
+-num_iterations = 10000
+
+Mudanças nos valores de b e w não são percebidas pelo resultado, convergindo sempre para o mesmo valor.
+Reduções em alpha mudam levemente o resultado, valores abaixo de 0.01 tem um EQM maior por 7*10^-15. Já aumentos em alpha fazem com que a rede neural divirja a partir de 0.012.
+Mudanças em num_iterations não alteram o resultado em fatores mais relevantes que a ordem 10^15.
+
+O erro quadrático médio ótimo obtido por tais configurações é 8.527708190982557
 
 ## Tensorflow/Keras
 
