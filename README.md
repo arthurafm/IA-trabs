@@ -75,3 +75,13 @@ Acurácia máxima obtida foi 1%, e sem modificar o número máximo de neurônios
 
 
 #### 4) Quais fatores (tanto das próprias redes quanto dos dados) levam as redes neurais a melhorarem o desempenho? E quais fatores tornam o desempenho pior?
+
+Melhorar:
+A quantidade é a qualidade de dados, pois quando mais diversificado e mais amplo for os dados, melhor é o aprendizado da IA.
+Uma boa arquitetura de rede neural, visando um melhor aproveitamento dos neurônios.
+Inicialização correta dos pesos utilizados na rede neural.
+
+Piorar:
+Overfitting, que ocorre quando a rede neural se ajusta muito bem ao conjunto de dados de treinamento porem não tem bom desempenho no conjunto de dados reais.
+Problema nos dados, sendo porque o conjunto de dados é muito pequeno ou seja porque ele não representa todas as variações possíveis.
+Escolha imprórpia para a arquitetura, levando a um desempenho pior que o esperado, válido lembrar que nem sempre uma arquitetura mais complexa é a melhor.
