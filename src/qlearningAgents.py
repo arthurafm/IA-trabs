@@ -227,11 +227,11 @@ class ApproximateQAgent(PacmanQAgent):
         "*** YOUR CODE HERE ***"
         #util.raiseNotDefined()
         
-        Q = 0
+         Q = 0
         feat = self.featExtractor.getFeatures(state, action)
-        
+
         for fear, value in feat.items():
-            Q = Q + (self.weights[feat] * value)
+            Q = Q + (self.weights[fear] * value)
 
         return Q
 
