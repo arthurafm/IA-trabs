@@ -1,87 +1,91 @@
-# IA-trab1
+# Kit othello
+Kit para executar partidas de Othello e Jogo da Velha invertido (Tic-Tac-Toe Misere) e implementar algoritmos de busca com adversário.
 
-## Integrantes do grupo
-Arthur Alves Ferreira Melo - 00333985
+## Conteudo
+O kit contém os seguintes arquivos (todos os `__init__.py` estao omitidos):
 
-Carlos Negri - 00333174
+```text
+kit_games
+|-- server.py
+|-- server_tui.py
+\-- advsearch
+    |-- othello
+    |   |-- board.py       <-- encapsula o tabuleiro do othello
+    |   \-- gamestate.py   <-- encapsula um estado do othello (config. do tabuleiro e cor que joga)
+    |-- tttm
+    |   |-- board.py       <-- encapsula o tabuleiro do tic-tac-toe misere
+    |   \-- gamestate.py   <-- encapsula um estado do tic-tac-toe-misere (config. do tabuleiro e cor que joga)
+    |-- randomplayer
+    |   \-- agent.py       <-- agente que joga aleatoriamente
+    |-- humanplayer        
+    |   \-- agent.py       <-- agente para um humano jogar 
+    |-- timer.py           <-- funcoes auxiliares de temporizacao
+    \-- your_agent         <-- renomeie este diretorio c/ o nome do seu agente 
+      ├── mcts.py         <-- implemente o algoritmo MCTS aqui
+      ├── minimax.py      <-- implemente a poda alfa-beta aqui
+      ├── othello_minimax_count.py  <-- chame seu minimax com a heuristica de contagem 
+      ├── othello_minimax_mask.py   <-- chame seu minimax com a heuristica posicional 
+      ├── othello_minimax_custom.py <-- chame seu minimax com uma heuristica customizada
+      ├── tournament_agent.py       <-- agente que vai jogar o torneio de othello 
+      ├── tttm_minimax.py           <-- chame seu minimax sem limite de profundidade aqui
+      └── [vc pode adicionar outros arquivos e subdiretorios aqui]
+```
 
-Thiago Parisotto Dias - 00313306
+## Requisitos 
+O servidor foi testado em uma máquina GNU/Linux com o interpretador python 3.9.7.
 
-Yasmin Katerine Beer Zebrowski - 00277765
+Outras versões do interpretador python ou sistema operacional podem funcionar, mas não foram testados.
 
-Turma A
+## Instruções
 
-## Rede Neural de Uma Camada
-Para as funções desenvolvidas, foram setados os valores:
+Para iniciar uma partida, digite no terminal:
 
--b = 1.16
+`python server.py game player1 player 2 [-h] [-d delay] [-p pace]  [-o output-file] [-l log-history]`
 
--w = -3.45
+Nos parâmetros, game é o jogo a ser jogado (othello ou tttm para tic-tac-toe misere)  'player(1 ou 2)' são o caminhos dentro de `advsearch` onde estão implementados os make_move dos jogadores.
 
--alpha = 0.01
+Os argumentos entre colchetes são opcionais, seu significado é descrito a seguir:
+```text
+-h, --help            Mensagem de ajuda
+-d delay, --delay delay
+                    Tempo alocado para os jogadores realizarem a jogada (default=5s)
+-p pace, --pace pace
+                    Tempo mínimo que o servidor espera para processar a jogada (para poder ver partidas muito 
+                    rapidas sem se perder no terminal)
+-l log-history, --log-history log-history
+                    Arquivo para o log do jogo (default=history.txt)
+-o output-file, --output-file output-file
+                    Arquivo de saida com os detalhes do jogo (inclui historico)
+```
 
--num_iterations = 10000
+O jogador 'random' se localiza em `advsearch/randomplayer/agent.py`. Para jogar uma partida com ele,
+basta substituir player1 ou 2 por esse caminho. Como exemplo, inicie
+uma partida random vs. random de othello para ver o servidor funcionando:
 
-Mudanças nos valores de b e w não são percebidas pelo resultado, convergindo sempre para o mesmo valor.
-Reduções em alpha mudam levemente o resultado, valores abaixo de 0.01 tem um EQM maior por 7*10^-15. Já aumentos em alpha fazem com que a rede neural divirja a partir de 0.012.
-Mudanças em num_iterations não alteram o resultado em fatores mais relevantes que a ordem 10^15.
+`python othello server.py advsearch/randomplayer/agent.py advsearch/randomplayer/agent.py -d 1 -p 0.3`
 
-O erro quadrático médio ótimo obtido por tais configurações é 8.527708190982557
+O delay pode ser de 1 segundo porque o jogador random é muito rápido (e muito incompetente). O passo é de 0.3 segundos para acompanhar o progresso da partida (pode acelerar ou reduzir conforme a necessidade).
 
-## Tensorflow/Keras
+O jogador 'human' se localiza em `advsearch/humanplayer/agent.py`. Você pode utilizar este player para jogar você mesmo e testar suas habilidades contra outro agente (inclusive o que você está construindo nesse trabalho). 
 
-### Características dos datasets
-Quantas classes, quantas amostras e qual o tamanho das imagens (altura x largura x canais de cor)?
+Para jogar com ele, utilize o mesmo comando acima, trocando o player1 ou 2 por `advsearch/humanplayer/agent.py`. Você terá o limite de 1 minuto para pensar na sua jogada. Digite as coorenadas da ação na ordem `<coluna> <linha>`.  
 
-#### MNIST
-O conjunto de dados contém 60.000 imagens de treinamento e 10.000 imagens de teste, todas em preto e branco, com 28x28 pixels.
+## Funcionamento 
 
-#### FASHION MNIST
-O conjunto de dados contém 70.000 imagens em escala de cinza de 28x28 pixels de produtos de moda de 10 categorias, provenientes de um conjunto de dados de imagens de artigos da Zalando, com 7.000 imagens por categoria. O conjunto de treinamento consiste em 60.000 imagens e o conjunto de teste consiste em 10.000 imagens.
+Iniciando pelo primeiro jogador, que jogará com as peças pretas, o servidor chama a função `make_move(state)` do seu agente. A função recebe `state`, um objeto da classe `GameState` que contém um tabuleiro (objeto da classe `Board` e o jogador a fazer a jogada (um caractere) (`B` para as pretas ou `W` para as brancas). Para os detalhes, veja `gamestate.py` e `board.py` de cada jogo.
 
-#### CIFAR10
-Este conjunto de dados é composto por 60.000 imagens coloridas de 32x32 pixels em 10 classes, com 6.000 imagens por classe. Há 50.000 imagens de treinamento e 10.000 imagens de teste. 
+O servidor então espera o delay e recebe a tupla (x,y) com coluna e linha com a jogada do jogador. O servidor processa a jogada, exibe o novo estado no terminal e passa a vez para o próximo jogador, repetindo esse ciclo até o fim do jogo.
 
-#### CIFAR100
-Este conjunto de dados é composto por 60.000 imagens coloridas de 32x32 pixels em 100 classes, com 600 imagens por classe. Por classe, há 500 imagens de treinamento e 100 imagens de teste.
-
-
-### Conclusões considerando as seguintes questões
-
-#### 1) Em quais datasets um perceptron simples (sem convolução e sem camadas ocultas) obtém uma acurácia acima de 80%?
-
-Apenas MNIST, embora Fashion MNIST quase chegue em 80%.
-
-MNIST
-Loss: 239.5882 - Accuracy: 0.8882
-
-Fashion MNIST
-Loss: 1429.0972 - Accuracy: 0.7943
-
-CIFAR10
-Loss: 106239.5547 - Accuracy: 0.1586
-
-CIFAR100
-Loss: nan - Accuracy: 0.0100
-
-#### 2) Qual a acurácia máxima obtida no CIFAR-10? Qual modificação teve maior impacto positivo? Qual o maior desafio/dificuldade?
-
-Acurácia máxima obtida foi 39,87%.
-Adição de duas convoluções 2D com ativação sigmóide, mais MaxPool2D e duas camadas ocultas Dense aumentou a acurácia (0.3987) e diminuiu o loss (1.6561). Alterando o número de neurônios de 5 para 10 não alterou significativamente os resultados. Alterando a ativação para relu, obtivemos acurácia de 0.3346 e 1.6963 de perda, ou seja, também não foi significativamente melhor. Logo, aumentar o número de neurônios e usar ativação sigmóide foram os impactos positivos que observamos.
-
-#### 3) Foi possível obter mais de 60% de acurácia no CIFAR-100? Qual modificação teve maior impacto positivo? Qual o maior desafio/dificuldade?
-
-Acurácia máxima obtida foi 1%, e sem modificar o número máximo de neurônios não conseguimos nenhum resultado diferente. A perda não é um número.
+No fim do jogo, o servidor exibe a pontuação de cada jogador e cria um arquivo `results.xml`.
+com todas as jogadas tentadas pelos jogadores (inclusive as ilegais). Um arquivo `history.txt` também contém as jogadas, e esse é criado mesmo que a partida seja interrompida no meio (e.g. crash de um agente).
 
 
-#### 4) Quais fatores (tanto das próprias redes quanto dos dados) levam as redes neurais a melhorarem o desempenho? E quais fatores tornam o desempenho pior?
+## Notas
+* O servidor checa a legalidade das jogadas antes de efetivá-las. A vez é devolvida para o jogador que tentou a jogada ilegal
+* Jogadas ilegais demais resultam em desqualificação.
+* O jogador 'random' apenas sorteia uma jogada entre as válidas no estado recebido.
+* O jogador 'human' verifica a legalidade da jogada antes de enviá-la ao servidor.
+* Em caso de problemas com o servidor, reporte via moodle ou email.
 
-Melhorar:
-A quantidade é a qualidade de dados, pois quando mais diversificado e mais amplo for os dados, melhor é o aprendizado da IA.
-Uma boa arquitetura de rede neural, visando um melhor aproveitamento dos neurônios.
-Inicialização correta dos pesos utilizados na rede neural.
-
-Piorar:
-Overfitting, que ocorre quando a rede neural se ajusta muito bem ao conjunto de dados de treinamento porem não tem bom desempenho no conjunto de dados reais.
-Problema nos dados, sendo porque o conjunto de dados é muito pequeno ou seja porque ele não representa todas as variações possíveis.
-Escolha imprórpia para a arquitetura, levando a um desempenho pior que o esperado, válido lembrar que nem sempre uma arquitetura mais complexa é a melhor.
+ISSO ABAIXO AINDA NAO FUNCIONA:
+Para ver o tabuleiro e as peças com cores, instale a biblioteca `pytermgui` (por exemplo, com `pip install pytermgui`) e execute o `server_tui.py` ao invés do `server.py`. 
