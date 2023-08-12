@@ -18,6 +18,15 @@ class Nodo:
         self.pai = pai
         self.acao = acao
         self.custo = custo
+    def __eq__(self, other):
+        isEstadoEqual = self.estado == other.estado
+        isPaiEqual = self.pai == other.pai
+        isAcaoEqual = self.acao == other.acao
+        isCustoEqual = self.custo == other.custo
+        return isEstadoEqual and isPaiEqual and isAcaoEqual and isCustoEqual
+
+    def __hash__(self):
+        return hash((self.estado, self.pai, self.acao, self.custo))
 
 
 def sucessor(estado:str)->Set[Tuple[str,str]]:
