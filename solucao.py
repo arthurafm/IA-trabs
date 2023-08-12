@@ -24,9 +24,35 @@ def sucessor(estado:str)->Set[Tuple[str,str]]:
     :param estado:
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
 
+    actionList = []
+
+    if str[6] != '_' and str[7] != '_' and str[8] != '_':
+        actionList.append('abaixo')
+    if str[0] != '_' and str[1] != '_' and str[2] != '_':
+        actionList.append('acima')
+    if str[0] != '_' and str[3] != '_' and str[6] != '_':
+        actionList.append('esquerda')
+    if str[2] != '_' and str[5] != '_' and str[8] != '_':
+        actionList.append('direita')
+
+    _index = str.index('_')
+    tupla = []
+    for action in actionList:
+        charList = list(str)
+        if action == 'abaixo':
+            charList[_index], charList[_index + 3] = charList[_index + 3], charList[_index]
+        if action == 'acima':
+            charList[_index], charList[_index - 3] = charList[_index - 3], charList[_index]
+        if action == 'esquerda':
+            charList[_index], charList[_index - 1] = charList[_index - 1], charList[_index]
+        if action == 'direita':
+            charList[_index], charList[_index + 1] = charList[_index + 1], charList[_index]
+        newStr = ''
+        for char in charList:
+            newStr += char
+        tupla.append((action, newStr))
+    return tupla
 
 def expande(nodo:Nodo)->Set[Nodo]:
     """
