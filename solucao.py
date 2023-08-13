@@ -95,8 +95,51 @@ def astar_hamming(estado: str) -> list[str]:
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+
+    def somaHamming(CS, ES):            #Cuerrent State,  End State
+    
+        OOP = 0     #Ouf Of Place
+        
+        # OOF qtd
+        for x, y in zip(CS, ES):
+            if x != y and x != '_':
+                OOP += 1
+        
+        return OOP
+
+    CS = estado                         #Current State
+    startNode = Nodo(CS, None, None, 0)     #Node Init
+    end = "12345678_"          #end state
+
+    # Priority queues
+    openNode = [startNode]
+    closedNode = set()
+
+    while openNode:
+        # get the less expensive node
+        currentNode = min(openNode, key=lambda node: node.custo + somaHamming(node.estado, end))
+
+        # Is it the end state?
+        if currentNode.estado == end:
+            return currentNode.acao
+        else:
+            openNode.remove(currentNode)
+            closedNode.add(currentNode.estado)
+
+            successors = expande(currentNode)
+
+            for successor in successors:
+                existing_node = next((node for node in openNode if node.estado == successor.estado), None)
+                if existing_node:
+                    if successor.custo < existing_node.custo:
+                        openNode.remove(existing_node)
+                        openNode.append(successor)
+                else:
+                    openNode.append(successor)
+
+    return None
+
+
 
 
 def astar_manhattan(estado: str) -> list[str]:
