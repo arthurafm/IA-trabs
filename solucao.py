@@ -152,7 +152,50 @@ def astar_manhattan(estado: str) -> list[str]:
     :return:
     """
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    def distManhattan(CS, ES):
+        dist = 0
+
+        for i in range(len(CS)):
+            if CS[i] != '_' and CS[i] != ES[i]:
+                
+                Xcs, Ycs = divmod(CS.index(CS[i]), 3)
+                Xes, Yes = divmod(ES.index(CS[i]), 3)
+
+                dist += abs(Xcs - Xes) + abs(Ycs - Yes)
+        return dist
+
+    CS = estado                         # Current State
+    startNode = Nodo(CS, None, None, 0)  # Node Init
+    end = "12345678_"          # end state
+
+    # Priority queues
+    openNode = [startNode]
+    closedNode = set()
+
+    while openNode:
+        # get the less expensive node
+        currentNode = min(openNode, key=lambda node: node.custo + distManhattan(node.estado, end))
+
+        # Is it the end state?
+        if currentNode.estado == end:
+            return currentNode.acao
+        else:
+            openNode.remove(currentNode)
+            closedNode.add(currentNode.estado)
+
+            successors = expande(currentNode)
+
+            for successor in successors:
+                existing_node = next((node for node in openNode if node.estado == successor.estado), None)
+                if existing_node:
+                    if successor.custo < existing_node.custo:
+                        openNode.remove(existing_node)
+                        openNode.append(successor)
+                else:
+                    openNode.append(successor)
+
+    return None
+
 
 
 def bfs(estado: str) -> list[str]:
