@@ -21,23 +21,18 @@ utilities = {
     'K': 14, 'L': 5, 'M': 2
 }
 
-# conta o numero de vezes que a funcao de utilidade e' chamada em cada nodo
-calls = defaultdict(int)
-
-def utility(state: 'GameState', player:str) -> float:
+class TestAlphaBetaPruning(unittest.TestCase):
     """
-    Returns the utility of the given state.
+    Este teste checa se sua implementacao da poda alfa-beta 
+    retorna a acao correta na arvore de jogo abstrata e poda os nodos corretamente.
+    A arvore e' a do slide 37 em: 
+    https://docs.google.com/presentation/d/1IPYPito7htL61OKHEWZw402oZQBCjEx9_H3KTEgUna4/edit#slide=id.gbe183847ed_0_95)
     """
-    calls[state.board.board] += 1
-    if player == 'B':
-        return utilities[state.board.board]
-    return -utilities[state.board.board]
-
-class TestAgent(unittest.TestCase):
 
     def setUp(self):
         """
         Reseta o contador de chamadas da funcao de utilidade
+        e obtem a jogada para o estado inicial
         """
         global calls
         calls = defaultdict(int)
@@ -49,7 +44,7 @@ class TestAgent(unittest.TestCase):
 
     def test_correct_move(self):
         """
-        Esse teste verifica se a jogada retornada foi a correta
+        Verifica se a jogada retornada foi a correta
         """
 
         # verifica se a funcao minimax retornou a melhor jogada
@@ -57,7 +52,7 @@ class TestAgent(unittest.TestCase):
 
     def test_pruning(self):
         """
-        Esse teste verifica a funcao minimax em advsearch.your_agent.minimax
+        Verifica se a funcao poda somente os nodos I e J.
         """
         # nao-terminais nao podem ser avaliados
         for non_terminal in ['A', 'B', 'C', 'D']:
@@ -77,6 +72,26 @@ class TestAgent(unittest.TestCase):
                 # verifica se a funcao minimax nao foi chamada em estado podado
                 self.assertEqual(calls[pruned], 0, 'Erro: a funcao de utilidade nao deve ser chamada para os nos q sao podados')
         
+
+# *********************************************
+# Voce nao precisa se preocupar com o codigo daqui pra baixo
+# O codigo e' para fazer a arvore de jogo abstrata ter
+# a mesma interface de um jogo normal e sua implementacao 
+# poder ser executada normalmente
+# *********************************************
+
+# conta o numero de vezes que a funcao de utilidade e' chamada em cada nodo
+calls = defaultdict(int)
+
+def utility(state: 'GameState', player:str) -> float:
+    """
+    Returns the utility of the given state.
+    """
+    calls[state.board.board] += 1
+    if player == 'B':
+        return utilities[state.board.board]
+    return -utilities[state.board.board]
+
 
 class Board:
     """

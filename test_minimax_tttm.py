@@ -1,14 +1,15 @@
 import unittest
 from typing import Callable, Tuple
 
-import advsearch.tttm.board as board
-import advsearch.tttm.gamestate as state
+from advsearch.tttm.board import Board
+from advsearch.tttm.gamestate import GameState
 import advsearch.timer as timer
 
-import advsearch.your_agent.minimax as minimax          # mude your_agent pelo nome do seu modulo
-import advsearch.your_agent.tttm_minimax as tttm_agent  # mude your_agent pelo nome do seu modulo
+# mude your_agent pelo nome do seu modulo nos imports abaixo
+import advsearch.your_agent.minimax as minimax          
+import advsearch.your_agent.tttm_minimax as tttm_agent  
 
-def mirror_move(state: state.GameState) -> Tuple[int, int]:
+def mirror_move(state: GameState) -> Tuple[int, int]:
     """
     Retorna a jogada simetrica 'a jogada anterior do oponente.
     Retorna a jogada de centro para o primeiro movimento.
@@ -26,7 +27,7 @@ def mirror_move(state: state.GameState) -> Tuple[int, int]:
                 return (x,y)
 
 
-class TestAgent(unittest.TestCase):
+class TestAlphaBetaTTTM(unittest.TestCase):
 
     def run_with_timeout(self, timeout: int, function: Callable, args: tuple) -> Tuple:
         """
@@ -56,20 +57,21 @@ W.B
 WB.
 BW.
 """
-        board = board.Board.from_string(board_str)
-        state = state.GameState(board, 'W')
+        board = Board.from_string(board_str)
+        state = GameState(board, 'W')
         # a avaliacao deve ser positiva para as brancas que vencem e negativa para as pretas que perdem
         self.assertGreater(tttm_agent.utility(state, 'W'), 0)
         self.assertLess(tttm_agent.utility(state, 'B'), 0)
 
-    def test_correct_move_initial_state_(self):
+    def test_correct_move_initial_state(self):
         """
         Esse teste verifica se o agente consegue retornar a jogada correta pro estado inicial.
         Deve ser no centro, caso contrario o jogo sera' perdido se o oponente jogar com perfeicao.
         :return:
         """
-        board = board.Board()
-        state = state.GameState(board, 'B')
+        #global board, state
+        board = Board()
+        state = GameState(board, 'B')
 
         # configura a funcao minimax pra receber o estado, profundidade ilimitada e a funcao de utilidade definida no agente
         move = self.run_with_timeout(60, minimax.minimax_move, (state, -1, tttm_agent.utility) )
@@ -87,14 +89,14 @@ BW.
 ...
 ...
 """
-        board = board.Board.from_string(board_str)
-        state = state.GameState(board, 'W')
+        board = Board.from_string(board_str)
+        state = GameState(board, 'W')
 
         # a jogada vencedora nao pode ser no centro nem nas diagonais, restando as pontas da 'cruz'
-        winning_moves = {(0,1), (1,0), (0,2), (2,1)}
+        winning_moves = {(0,1), (1,0), (1,2), (2,1)}
 
         # configura a funcao minimax pra receber o estado, profundidade ilimitada e a funcao de utilidade definida no agente
-        move = self.run_with_timeout(60, minimax, (state, -1, tttm_agent.utility) )  
+        move = self.run_with_timeout(60, minimax.minimax_move, (state, -1, tttm_agent.utility) )  
         self.assertIn(move, winning_moves, "Erro: a jogada vencedora apos erro na primeira jogada nao foi encontrada")
 
 
@@ -102,15 +104,15 @@ BW.
         """
         Verifica se a implementacao joga o jogo com perfeicao (i.e. nao retorna uma jogada sub-otima)
         """
-        board = board.Board()
-        state = state.GameState(board, 'W')
+        board = Board()
+        state = GameState(board, 'W')
 
         # cria uma funcao 'auxiliar' que recebe o estado e executa o make_move com os demais parametros pre-definidos
         agent_timeout_call = lambda state: self.run_with_timeout(60, tttm_agent.make_move, (state,))
 
         # primeira jogada deve ser no centro
         move = agent_timeout_call(state.copy())
-        self.assertEqual(move, (0,0), "Erro: a primeira jogada deve ser no centro.")
+        self.assertEqual(move, (1,1), "Erro: a primeira jogada deve ser no centro.")
 
         #aplica a jogada retornada 
         state = state.next_state(move)

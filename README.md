@@ -6,21 +6,25 @@ O kit contém os seguintes arquivos (todos os `__init__.py` estao omitidos):
 
 ```text
 kit_games
-|-- server.py
-|-- server_tui.py
-\-- advsearch
-    |-- othello
-    |   |-- board.py       <-- encapsula o tabuleiro do othello
-    |   \-- gamestate.py   <-- encapsula um estado do othello (config. do tabuleiro e cor que joga)
-    |-- tttm
-    |   |-- board.py       <-- encapsula o tabuleiro do tic-tac-toe misere
-    |   \-- gamestate.py   <-- encapsula um estado do tic-tac-toe-misere (config. do tabuleiro e cor que joga)
-    |-- randomplayer
-    |   \-- agent.py       <-- agente que joga aleatoriamente
-    |-- humanplayer        
-    |   \-- agent.py       <-- agente para um humano jogar 
-    |-- timer.py           <-- funcoes auxiliares de temporizacao
-    \-- your_agent         <-- renomeie este diretorio c/ o nome do seu agente 
+├── server.py
+├── server_tui.py
+├── test_mcts.py                <-- teste (muito basico) do seu MCTS
+├── test_minimax_tttm.py        <-- teste da poda alfa-beta no tic-tac-toe misere
+├── test_othello_evaluations.py <-- teste das funcoes de avaliacao do othello p/ a poda alfa-beta
+├── test_pruning.py             <-- teste da poda alfa-beta em um jogo simplificado
+└── advsearch
+    ├── othello
+    |   ├── board.py       <-- encapsula o tabuleiro do othello
+    |   └── gamestate.py   <-- encapsula um estado do othello (config. do tabuleiro e cor que joga)
+    ├── tttm
+    |   ├── board.py       <-- encapsula o tabuleiro do tic-tac-toe misere
+    |   └── gamestate.py   <-- encapsula um estado do tic-tac-toe-misere (config. do tabuleiro e cor que joga)
+    ├── randomplayer
+    |   └── agent.py       <-- agente que joga aleatoriamente
+    ├── humanplayer        
+    |   └── agent.py       <-- agente para um humano jogar 
+    ├── timer.py           <-- funcoes auxiliares de temporizacao
+    └── your_agent         <-- renomeie este diretorio c/ o nome do seu agente 
       ├── mcts.py         <-- implemente o algoritmo MCTS aqui
       ├── minimax.py      <-- implemente a poda alfa-beta aqui
       ├── othello_minimax_count.py  <-- chame seu minimax com a heuristica de contagem 
