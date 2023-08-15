@@ -52,6 +52,7 @@ class TestaSolucao(unittest.TestCase):
             self.fail(f"{alg.__name__}: timeout")
 
         return response
+        return alg(input)
 
 
     def test_run_astar_hamming(self):
@@ -61,6 +62,7 @@ class TestaSolucao(unittest.TestCase):
         numero correto de elementos. O teste nao checa se as acoes levam para a solucao!
         :return:
         """
+
         # no estado 2_3541687, a solucao otima tem 23 movimentos.
         self.assertEqual(23, len(self.run_algorithm(solucao.astar_hamming, "2_3541687")))
 

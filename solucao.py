@@ -1,5 +1,6 @@
 from typing import Iterable, Set, Tuple
 
+import heapq
 
 class Nodo:
     """
@@ -19,14 +20,16 @@ class Nodo:
         self.acao = acao
         self.custo = custo
     def __eq__(self, other):
-        isEstadoEqual = self.estado == other.estado
-        isPaiEqual = self.pai == other.pai
-        isAcaoEqual = self.acao == other.acao
-        isCustoEqual = self.custo == other.custo
-        return isEstadoEqual and isPaiEqual and isAcaoEqual and isCustoEqual
+        if self.estado != other.estado:
+            return False
+        return True
 
     def __hash__(self):
-        return hash((self.estado, self.pai, self.acao, self.custo))
+        return hash(self.estado)
+
+    def __lt__(self, other):
+        return self.custo < other.custo
+
 
 
 def sucessor(estado:str)->Set[Tuple[str,str]]:
@@ -96,47 +99,45 @@ def astar_hamming(estado: str) -> list[str]:
     :return:
     """
 
-    def somaHamming(CS, ES):            #Cuerrent State,  End State
-    
+    def somaHamming(CS, ES):            #Current State,  End State
+
         OOP = 0     #Ouf Of Place
-        
+
         # OOF qtd
         for x, y in zip(CS, ES):
             if x != y and x != '_':
                 OOP += 1
-        
+
         return OOP
 
-    CS = estado                         #Current State
-    startNode = Nodo(CS, None, None, 0)     #Node Init
-    end = "12345678_"          #end state
+    startNode = Nodo(estado, None, "", 0)     #Node Init
+    end = "12345678_"                         #End State
 
     # Priority queues
+    visitedNode = set()
     openNode = [startNode]
-    closedNode = set()
 
     while openNode:
         # get the less expensive node
-        currentNode = min(openNode, key=lambda node: node.custo + somaHamming(node.estado, end))
+        currentNode = heapq.heappop(openNode)
 
         # Is it the end state?
         if currentNode.estado == end:
-            return currentNode.acao
-        else:
-            openNode.remove(currentNode)
-            closedNode.add(currentNode.estado)
+            actionPath = []
+            # Backtracks, adding actions to list, until finds starting node
+            while currentNode.custo != 0:
+                actionPath.insert(0, currentNode.acao)
+                currentNode = currentNode.pai
+            return actionPath
 
+        if currentNode not in visitedNode:
+            visitedNode.add(currentNode)
             successors = expande(currentNode)
 
             for successor in successors:
-                existing_node = next((node for node in openNode if node.estado == successor.estado), None)
-                if existing_node:
-                    if successor.custo < existing_node.custo:
-                        openNode.remove(existing_node)
-                        openNode.append(successor)
-                else:
-                    openNode.append(successor)
-
+                if successor not in visitedNode:
+                    successor.custo += somaHamming(successor.estado, end)
+                    heapq.heappush(openNode, successor)
     return None
 
 
@@ -164,35 +165,34 @@ def astar_manhattan(estado: str) -> list[str]:
                 dist += abs(Xcs - Xes) + abs(Ycs - Yes)
         return dist
 
-    CS = estado                         # Current State
-    startNode = Nodo(CS, None, None, 0)  # Node Init
-    end = "12345678_"          # end state
+    startNode = Nodo(estado, None, None, 0)  # Node Init
+    end = "12345678_"                        # end state
 
     # Priority queues
     openNode = [startNode]
-    closedNode = set()
+    visitedNode = set()
 
     while openNode:
         # get the less expensive node
-        currentNode = min(openNode, key=lambda node: node.custo + distManhattan(node.estado, end))
+        currentNode = heapq.heappop(openNode)
 
         # Is it the end state?
         if currentNode.estado == end:
-            return currentNode.acao
-        else:
-            openNode.remove(currentNode)
-            closedNode.add(currentNode.estado)
+            actionPath = []
+            # Backtracks, adding actions to list, until finds starting node
+            while currentNode.custo != 0:
+                actionPath.insert(0, currentNode.acao)
+                currentNode = currentNode.pai
+            return actionPath
 
+        if currentNode not in visitedNode:
+            visitedNode.add(currentNode)
             successors = expande(currentNode)
 
             for successor in successors:
-                existing_node = next((node for node in openNode if node.estado == successor.estado), None)
-                if existing_node:
-                    if successor.custo < existing_node.custo:
-                        openNode.remove(existing_node)
-                        openNode.append(successor)
-                else:
-                    openNode.append(successor)
+                if successor not in visitedNode:
+                    successor.custo += distManhattan(successor.estado, end)
+                    heapq.heappush(openNode, successor)
 
     return None
 
