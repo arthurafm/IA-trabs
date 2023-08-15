@@ -19,6 +19,7 @@ class Nodo:
         self.pai = pai
         self.acao = acao
         self.custo = custo
+
     def __eq__(self, other):
         if self.estado != other.estado:
             return False
@@ -31,8 +32,7 @@ class Nodo:
         return self.custo < other.custo
 
 
-
-def sucessor(estado:str)->Set[Tuple[str,str]]:
+def sucessor(estado: str) -> Set[Tuple[str, str]]:
     """
     Recebe um estado (string) e retorna um conjunto de tuplas (ação,estado atingido)
     para cada ação possível no estado recebido.
@@ -71,7 +71,6 @@ def sucessor(estado:str)->Set[Tuple[str,str]]:
     return tupla
 
 
-
 def expande(nodo: Nodo) -> Set[Nodo]:
     """
     Recebe um nodo (objeto da classe Nodo) e retorna um conjunto de nodos.
@@ -99,9 +98,9 @@ def astar_hamming(estado: str) -> list[str]:
     :return:
     """
 
-    def somaHamming(CS, ES):            #Current State,  End State
+    def somaHamming(CS, ES):  # Current State,  End State
 
-        OOP = 0     #Ouf Of Place
+        OOP = 0  # Ouf Of Place
 
         # OOF qtd
         for x, y in zip(CS, ES):
@@ -110,8 +109,8 @@ def astar_hamming(estado: str) -> list[str]:
 
         return OOP
 
-    startNode = Nodo(estado, None, "", 0)     #Node Init
-    end = "12345678_"                         #End State
+    startNode = Nodo(estado, None, "", 0)  # Node Init
+    end = "12345678_"  # End State
 
     # Priority queues
     visitedNode = set()
@@ -141,8 +140,6 @@ def astar_hamming(estado: str) -> list[str]:
     return None
 
 
-
-
 def astar_manhattan(estado: str) -> list[str]:
     """
     Recebe um estado (string), executa a busca A* com h(n) = soma das distâncias de Manhattan e
@@ -152,21 +149,21 @@ def astar_manhattan(estado: str) -> list[str]:
     :param estado: str
     :return:
     """
+
     # substituir a linha abaixo pelo seu codigo
     def distManhattan(CS, ES):
         dist = 0
 
         for i in range(len(CS)):
             if CS[i] != '_' and CS[i] != ES[i]:
-                
                 Xcs, Ycs = divmod(CS.index(CS[i]), 3)
                 Xes, Yes = divmod(ES.index(CS[i]), 3)
 
                 dist += abs(Xcs - Xes) + abs(Ycs - Yes)
         return dist
 
-    startNode = Nodo(estado, None, None, 0)  # Node Init
-    end = "12345678_"                        # end state
+    startNode = Nodo(estado, None, "", 0)  # Node Init
+    end = "12345678_"  # end state
 
     # Priority queues
     openNode = [startNode]
@@ -197,7 +194,6 @@ def astar_manhattan(estado: str) -> list[str]:
     return None
 
 
-
 def bfs(estado: str) -> list[str]:
     """
     Recebe um estado (string), executa a busca em LARGURA e
@@ -207,8 +203,36 @@ def bfs(estado: str) -> list[str]:
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    startNode = Nodo(estado, None, "", 0)  # Node Init
+    end = "12345678_"  # end state
+
+    # Priority queues
+    openNode = [startNode]
+    visitedNode = set()
+
+    while openNode:
+        # get the first node
+        currentNode = openNode.pop(0)
+
+        # Is it the end state?
+        if currentNode.estado == end:
+            actionPath = []
+            # Backtracks, adding actions to list, until finds starting node
+            while currentNode.custo != 0:
+                actionPath.insert(0, currentNode.acao)
+                currentNode = currentNode.pai
+            return actionPath
+
+        if currentNode not in visitedNode:
+            visitedNode.add(currentNode)
+            successors = expande(currentNode)
+
+            # Adds new nodes through BFS
+            for successor in successors:
+                if successor not in visitedNode:
+                    openNode.append(successor)
+
+    return None
 
 
 def dfs(estado: str) -> list[str]:
@@ -220,8 +244,36 @@ def dfs(estado: str) -> list[str]:
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    startNode = Nodo(estado, None, "", 0)  # Node Init
+    end = "12345678_"  # end state
+
+    # Priority queues
+    openNode = [startNode]
+    visitedNode = set()
+
+    while openNode:
+        # get the first node
+        currentNode = openNode.pop(0)
+
+        # Is it the end state?
+        if currentNode.estado == end:
+            actionPath = []
+            # Backtracks, adding actions to list, until finds starting node
+            while currentNode.custo != 0:
+                actionPath.insert(0, currentNode.acao)
+                currentNode = currentNode.pai
+            return actionPath
+
+        if currentNode not in visitedNode:
+            visitedNode.add(currentNode)
+            successors = expande(currentNode)
+
+            # Adds new nodes through DFS
+            for successor in successors:
+                if successor not in visitedNode:
+                    openNode.insert(0, successor)
+
+    return None
 
 
 def astar_new_heuristic(estado: str) -> list[str]:
@@ -233,5 +285,72 @@ def astar_new_heuristic(estado: str) -> list[str]:
     :param estado: str
     :return:
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+
+    # Foi escolhida a heurística da Distância de Levenshtein
+
+    def distLevenshtein(token1, token2):
+        distances = []
+        distances_aux = []
+        for i in range(len(token1) + 1):
+            for j in range(len(token2) + 1):
+                distances_aux.append(0)
+            distances.append(distances_aux)
+
+        for t1 in range(len(token1) + 1):
+            distances[t1][0] = t1
+
+        for t2 in range(len(token2) + 1):
+            distances[0][t2] = t2
+
+        a = 0
+        b = 0
+        c = 0
+
+        for t1 in range(1, len(token1) + 1):
+            for t2 in range(1, len(token2) + 1):
+                if (token1[t1 - 1] == token2[t2 - 1]):
+                    distances[t1][t2] = distances[t1 - 1][t2 - 1]
+                else:
+                    a = distances[t1][t2 - 1]
+                    b = distances[t1 - 1][t2]
+                    c = distances[t1 - 1][t2 - 1]
+
+                    if (a <= b and a <= c):
+                        distances[t1][t2] = a + 1
+                    elif (b <= a and b <= c):
+                        distances[t1][t2] = b + 1
+                    else:
+                        distances[t1][t2] = c + 1
+
+        return distances[len(token1)][len(token2)]
+
+
+    startNode = Nodo(estado, None, "", 0)  # Node Init
+    end = "12345678_"  # End State
+
+    # Priority queues
+    visitedNode = set()
+    openNode = [startNode]
+
+    while openNode:
+        # get the less expensive node
+        currentNode = heapq.heappop(openNode)
+
+        # Is it the end state?
+        if currentNode.estado == end:
+            actionPath = []
+            # Backtracks, adding actions to list, until finds starting node
+            while currentNode.custo != 0:
+                actionPath.insert(0, currentNode.acao)
+                currentNode = currentNode.pai
+            return actionPath
+
+        if currentNode not in visitedNode:
+            visitedNode.add(currentNode)
+            successors = expande(currentNode)
+
+            for successor in successors:
+                if successor not in visitedNode:
+                    successor.custo += distLevenshtein(successor.estado, end)
+                    heapq.heappush(openNode, successor)
+    return None
