@@ -23,7 +23,7 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
 
     def MAX(s, alpha, beta, depth):
         if s.is_terminal() or depth == max_depth:
-            return eval_func(s, s.player), None
+            return eval_func(s, state.player), None
 
         v = float('-inf')
         a = None
@@ -41,7 +41,7 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
 
     def MIN(s, alpha, beta, depth):
         if s.is_terminal() or depth == max_depth:
-            return eval_func(s, s.player), None
+            return eval_func(s, state.player), None
 
         v = float('inf')
         a = None
@@ -58,4 +58,5 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
         return v, a
 
     value, action = MAX(state, float('-inf'), float('inf'), 0)
+
     return action

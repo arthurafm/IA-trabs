@@ -26,6 +26,7 @@ def make_move(state) -> Tuple[int, int]:
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
 
+    # Assume-se profundidade máxima = 10
     return minimax_move(state, 10, evaluate_mask)
 
 

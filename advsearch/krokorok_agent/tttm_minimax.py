@@ -1,12 +1,7 @@
 from typing import Tuple
-# Absoluto -> Teste nesse arquivo
-from advsearch.tttm.gamestate import GameState
-from advsearch.tttm.board import Board
-from minimax import minimax_move
-# Relativo -> Teste no arquivo-teste
-# from ..tttm.gamestate import GameState
-# from ..tttm.board import Board
-# from .minimax import minimax_move
+from ..tttm.gamestate import GameState
+from ..tttm.board import Board
+from .minimax import minimax_move
 
 
 
@@ -32,12 +27,3 @@ def utility(state: GameState, player:str) -> float: # Passou o teste!
         return 1                 # ganhou
     else:
         return -1                # perdeu
-
-
-if __name__ == '__main__':
-    board = Board()
-    state = GameState(board, 'B')
-
-    # configura a funcao minimax pra receber o estado, profundidade ilimitada e a funcao de utilidade definida no agente
-    move = minimax_move(state, -1, utility)
-    print(move)
