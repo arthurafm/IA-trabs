@@ -1,5 +1,5 @@
 import random
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Set
 
 
 def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
@@ -13,14 +13,23 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
 
-    def MAX(state, alpha, beta, depth):
-        if state.is_terminal() or depth == max_depth:
-            return eval_func(state, state.player)
+    def successors(s) -> Set:
+        successorsSet = set()
+
+        for move in s.legal_moves():
+            successorsSet.add((s.next_state(move), move))
+
+        return successorsSet
+
+    def MAX(s, alpha, beta, depth):
+        if s.is_terminal() or depth == max_depth:
+            return eval_func(s, s.player), None
+
         v = float('-inf')
         a = None
 
-        for (newS, newA) in state.legal_moves():
-            newV, x = MIN(newS, alpha, beta, depth + 1)
+        for (newS, newA) in successors(s):
+            newV, _ = MIN(newS, alpha, beta, depth + 1)
             if newV > v:
                 v = newV
                 a = newA
@@ -30,15 +39,15 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
 
         return v, a
 
-    def MIN(state, alpha, beta, depth):
-        if state.is_terminal() or depth == max_depth:
-            return eval_func(state, state.player)
+    def MIN(s, alpha, beta, depth):
+        if s.is_terminal() or depth == max_depth:
+            return eval_func(s, s.player), None
 
         v = float('inf')
         a = None
 
-        for (newS, newA) in state.legal_moves():
-            newV, x = MAX(state, alpha, beta, depth + 1)
+        for (newS, newA) in successors(s):
+            newV, _ = MAX(newS, alpha, beta, depth + 1)
             if newV < v:
                 v = newV
                 a = newA
@@ -48,6 +57,5 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
 
         return v, a
 
-    depth = 0
-    v, a = MAX(state, float('-inf'), float('inf'), depth)
-    return a
+    value, action = MAX(state, float('-inf'), float('inf'), 0)
+    return action

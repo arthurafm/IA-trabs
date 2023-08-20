@@ -1,13 +1,6 @@
 import random
 from typing import Tuple
 
-# Voce pode criar funcoes auxiliares neste arquivo
-# e tambem modulos auxiliares neste pacote.
-#
-# Nao esqueca de renomear 'krokorok_agent' com o nome
-# do seu agente.
-
-
 def make_move(state) -> Tuple[int, int]:
     """
     Returns a move for the given game state. 

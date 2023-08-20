@@ -4,12 +4,6 @@ from ..othello.gamestate import GameState
 from ..othello.board import Board
 from .minimax import minimax_move
 
-# Voce pode criar funcoes auxiliares neste arquivo
-# e tambem modulos auxiliares neste pacote.
-#
-# Nao esqueca de renomear 'krokorok_agent' com o nome
-# do seu agente.
-
 # mask template adjusted from https://web.fe.up.pt/~eol/IA/MIA0203/trabalhos/Damas_Othelo/Docs/Eval.html
 # could optimize for symmetries but just put all values here for coding speed :P
 # DO NOT CHANGE! 
@@ -32,15 +26,10 @@ def make_move(state) -> Tuple[int, int]:
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
 
-    # o codigo abaixo apenas retorna um movimento aleatorio valido para
-    # a primeira jogada 
-    # Remova-o e coloque uma chamada para o minimax_move (que vc implementara' no modulo minimax).
-    # A chamada a minimax_move deve receber sua funcao evaluate como parametro.
-
-    return random.choice([(2, 3), (4, 5), (5, 4), (3, 2)])
+    return minimax_move(state, 10, evaluate_mask)
 
 
-def evaluate_mask(state, player:str) -> float:
+def evaluate_mask(state, player:str) -> float: # Passou os testes!
     """
     Evaluates an othello state from the point of view of the given player. 
     If the state is terminal, returns its utility. 
@@ -49,4 +38,17 @@ def evaluate_mask(state, player:str) -> float:
     :param state: state to evaluate (instance of GameState)
     :param player: player to evaluate the state for (B or W)
     """
-    return 0   # substitua pelo seu codigo
+    valuePlayer = 0
+    valueOpponent = 0
+    board = state.get_board().tiles
+    
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == player:
+                valuePlayer += EVAL_TEMPLATE[i][j]
+            elif board[i][j] == Board.opponent(player):
+                valueOpponent += EVAL_TEMPLATE[i][j]
+
+    return valuePlayer - valueOpponent
+    
+    

@@ -1,6 +1,5 @@
 import unittest
 
-# mude krokorok_agent pelo nome do seu modulo nos imports abaixo
 from advsearch.krokorok_agent.othello_minimax_count import evaluate_count
 from advsearch.krokorok_agent.othello_minimax_mask import evaluate_mask
 from advsearch.othello.board import Board

@@ -1,14 +1,13 @@
-import random
 from typing import Tuple
-from ..tttm.gamestate import GameState
-from ..tttm.board import Board
-from .minimax import minimax_move
+# Absoluto -> Teste nesse arquivo
+from advsearch.tttm.gamestate import GameState
+from advsearch.tttm.board import Board
+from minimax import minimax_move
+# Relativo -> Teste no arquivo-teste
+# from ..tttm.gamestate import GameState
+# from ..tttm.board import Board
+# from .minimax import minimax_move
 
-# Voce pode criar funcoes auxiliares neste arquivo
-# e tambem modulos auxiliares neste pacote.
-#
-# Nao esqueca de renomear 'krokorok_agent' com o nome
-# do seu agente.
 
 
 def make_move(state: GameState) -> Tuple[int, int]:
@@ -20,14 +19,25 @@ def make_move(state: GameState) -> Tuple[int, int]:
 
     return minimax_move(state, -1, utility)
 
-def utility(state: GameState, player:str) -> float:
+def utility(state: GameState, player:str) -> float: # Passou o teste!
     """
     Retorna a utilidade de um estado (terminal) 
     """
 
-    if state.board.check_loser is None:
-        return 0                # segue o jogo
-    elif state.board.check_loser is player:
-        return -1               # perdeu
+    winner = state.winner()
+
+    if winner is None:
+        return 0                 # segue o jogo
+    elif winner == player:
+        return 1                 # ganhou
     else:
-        return 1                # ganhou
+        return -1                # perdeu
+
+
+if __name__ == '__main__':
+    board = Board()
+    state = GameState(board, 'B')
+
+    # configura a funcao minimax pra receber o estado, profundidade ilimitada e a funcao de utilidade definida no agente
+    move = minimax_move(state, -1, utility)
+    print(move)
