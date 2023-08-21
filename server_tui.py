@@ -18,8 +18,13 @@ def player_name(player_dir:str) -> str:
     :param player_dir:
     :return:
     """
-    if player_dir.startswith('advsearch'):
-        return player_dir[len('advsearch')+1:]  # +1 to account for the / or .
+    player_name = player_dir
+    if player_name.startswith('advsearch'):
+        player_name = player_name[len('advsearch')+1:]  # +1 to account for the / or .
+    
+    return os.path.dirname(player_name)
+    
+    
 
 
 class Server(object):
@@ -30,7 +35,7 @@ class Server(object):
 
     SCREEN_BOARD_POSITION = (0, 2)  # col, row of board position on screen
 
-    def __init__(self, p1_dir, p2_dir, delay, history, output, pace=0):
+    def __init__(self, game_type, p1_agent, p2_agent, delay, history, output, pace=0):
         """
         Initializes the Othello game server
         :param p1_dir: directory where the 'agent.py' of the 1st player is located
@@ -40,13 +45,25 @@ class Server(object):
         :param output: file to save game details (includes history)
         :param pace: time to wait to display a move, if a player returns before timeout
         """
+        if game_type not in {'othello', 'tttm'}:
+            raise ValueError(f"Unknown game type '{game_type}'. Allowed types are othello' and 'tttm'")
+
+        if game_type == 'othello':
+            from advsearch.othello.board import Board 
+            from advsearch.othello.gamestate import GameState
+        else:
+            from advsearch.tttm.board import Board
+            from advsearch.tttm.gamestate import GameState
+
+
+
         # normalizes paths to avoid errors with trailing slashes
-        p1_dir = os.path.normpath(p1_dir)
-        p2_dir = os.path.normpath(p2_dir)
+        p1_agent = os.path.normpath(p1_agent)
+        p2_agent = os.path.normpath(p2_agent)
 
         self.basedir = os.path.abspath('.')
 
-        self.player_dirs = {Board.BLACK: p1_dir, Board.WHITE: p2_dir}
+        self.player_dirs = {Board.BLACK: p1_agent, Board.WHITE: p2_agent}
 
         self.player_colors = [Board.BLACK, Board.WHITE]
         self.color_names = ['black', 'white']
@@ -66,12 +83,12 @@ class Server(object):
         self.start = None
         self.finish = None
 
-        # imports 'agent.py' from both players
-        p1_module = p1_dir.replace(os.sep, '.')
-        p2_module = p2_dir.replace(os.sep, '.')
+        # replaces / or \ with . and removes .py extension for both agentes
+        p1_agent, p2_agent = p1_agent.replace(os.sep, '.'), p2_agent.replace(os.sep, '.')
+        p1_agent, p2_agent = os.path.splitext(p1_agent)[0], os.path.splitext(p2_agent)[0]
         self.player_modules = {
-            Board.BLACK: importlib.import_module(f"{p1_module}.agent"),
-            Board.WHITE: importlib.import_module(f"{p2_module}.agent"),
+            'B': importlib.import_module(p1_agent),
+            'W': importlib.import_module(p2_agent),
         }
 
     def __del__(self):
@@ -115,8 +132,13 @@ class Server(object):
             opponent = Board.WHITE if current_player == Board.BLACK else Board.BLACK
 
             # calculates scores
-            p1_score = self.state.board.num_pieces(Board.BLACK) #sum([1 for char in str(self.board) if char == self.board.BLACK])
-            p2_score = self.state.board.num_pieces(Board.WHITE) #sum([1 for char in str(self.board) if char == self.board.WHITE])
+            if self.state.game_name == 'Othello':
+                p1_score = self.state.board.num_pieces('B') 
+                p2_score = self.state.board.num_pieces('W') 
+            else:
+                winner = self.state.winner()
+                p1_score = 1 if winner == 'B' else -1 if winner == 'W' else 0
+                p2_score = -1 if winner == 'B' else 1 if winner == 'W' else 0
 
             ansi_interface.cursor_home()
             self.print_header()
@@ -230,10 +252,17 @@ class Server(object):
         timing.set('start', time.asctime(self.start))
         timing.set('finish', time.asctime(self.finish))
 
-        scores = {
-            Board.BLACK: self.state.board.piece_count[Board.BLACK], 
-            Board.WHITE: self.state.board.piece_count[Board.WHITE]
-        }
+        if self.state.game_name == 'Othello':
+            scores = {
+                'B': self.state.board.piece_count['B'], 
+                'W': self.state.board.piece_count['W']
+            }
+        else:
+            winner = self.state.winner()
+            scores = {
+                'B': 1 if winner == 'B' else -1 if winner == 'W' else 0, 
+                'W': -1 if winner == 'B' else 1 if winner == 'W' else 0, 
+            }
 
         for color in colors:
             elem = ET.SubElement(root, 'player')
@@ -261,7 +290,12 @@ class Server(object):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Othello server.')
+    parser = argparse.ArgumentParser(description='TUI game server.')
+
+    parser.add_argument('game_type', type=str, choices=['tttm', 'othello'],
+                        help='Choose the game type: "tttm" (tic-tac-toe misere) or "othello"')
+
+
     parser.add_argument('players', metavar='player', type=str, nargs=2,
                         help='Path to player directory')
     parser.add_argument('-d', '--delay', type=float, metavar='delay',
@@ -269,7 +303,7 @@ if __name__ == '__main__':
                         help='Time allocated for players to make a move.')
 
     parser.add_argument('-p', '--pace', type=float,
-                        default=0,
+                        default=1,
                         help='Pace of the match: time to wait to display a move '
                              '(if a player returns a move before the delay/timeout).')
 
@@ -284,6 +318,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     p1, p2 = args.players
 
-    s = Server(p1, p2, args.delay, args.history, args.output, args.pace)
+    s = Server(args.game_type, p1, p2, args.delay, args.history, args.output, args.pace)
     s.run()
     s.write_output()

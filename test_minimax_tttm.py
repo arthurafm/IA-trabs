@@ -5,8 +5,9 @@ from advsearch.tttm.board import Board
 from advsearch.tttm.gamestate import GameState
 import advsearch.timer as timer
 
-import advsearch.krokorok_agent.minimax as minimax
-import advsearch.krokorok_agent.tttm_minimax as tttm_agent
+# mude your_agent pelo nome do seu modulo nos imports abaixo
+import advsearch.your_agent.minimax as minimax          
+import advsearch.your_agent.tttm_minimax as tttm_agent  
 
 def mirror_move(state: GameState) -> Tuple[int, int]:
     """
@@ -37,17 +38,17 @@ class TestAlphaBetaTTTM(unittest.TestCase):
         :param args: argumentos da funcao
         :return: resultado da funcao ou faz o teste falhar se houver timeout
         """
-        time_check = timer.FunctionTimer(function, args)
+        time_check = timer.FunctionTimer(function, args)  
         try:
             move = time_check.run(timeout)
-            return move
+            return move     
         except TimeoutError:
             self.fail("timeout")
 
 
     def test_utility(self):
         """
-        Esse teste verifica a funcao utility em advsearch.krokorok_agent.tttm_minimax
+        Esse teste verifica a funcao utility em advsearch.your_agent.tttm_minimax
         """
 
         # estado terminal com vitoria das brancas
@@ -76,7 +77,7 @@ BW.
         move = self.run_with_timeout(60, minimax.minimax_move, (state, -1, tttm_agent.utility) )
 
         # checa se a primeira jogada e' no centro
-        self.assertEquals(move, (1, 1), "Erro: a primeira jogada deve ser no centro, senao o jogo sera' perdido")
+        self.assertEqual(move, (1, 1), "Erro: a primeira jogada deve ser no centro, senao o jogo sera' perdido")
 
     def test_proven_win_exploiting_first_blunder(self):
         """
