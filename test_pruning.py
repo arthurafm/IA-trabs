@@ -2,7 +2,7 @@ import unittest
 from collections import OrderedDict, defaultdict
 from typing import Tuple, Union
 
-import advsearch.krokorok_agent.minimax as minimax  # mude krokorok_agent pelo nome do seu modulo
+import advsearch.krokorok_agent.minimax as minimax
 
 # uma arvore de jogo abstrata que contem o exemplo do  Russel&Norvig's para a poda alfa-beta
 # cada nodo eh um dict de acoes e seus nos filhos (cada acao eh uma tupla, conforme os jogos 'reais') 
@@ -68,7 +68,7 @@ class TestAlphaBetaPruning(unittest.TestCase):
 
         # I e J devem ser podados
         for pruned in ['I', 'J']:
-            with self.subTest(f"Pruned {non_terminal}"):
+            with self.subTest(f"Pruned {pruned}"):
                 # verifica se a funcao minimax nao foi chamada em estado podado
                 self.assertEqual(calls[pruned], 0, 'Erro: a funcao de utilidade nao deve ser chamada para os nos q sao podados')
         

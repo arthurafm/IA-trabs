@@ -13,11 +13,11 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
 
-    def successors(s) -> Set:
-        successorsSet = set()
+    def successors(s):
+        successorsSet = []
 
         for move in s.legal_moves():
-            successorsSet.add((s.next_state(move), move))
+            successorsSet.append((s.next_state(move), move))
 
         return successorsSet
 
