@@ -30,14 +30,14 @@ class Node:
             return (self.wins / self.games) + 2*exploration_coef*sqrt((2*math.log(self.father.games))/self.games)
 
 
-    def selection(node):
-        while(node.sons != []):
-            prefered_son = Node(None, None)
+    def selection(self):
+        while(self.sons != []):
+            prefered_son = None
             for newNode in node.sons:
-                if newNode.evaluate() > prefered_son.evaluate():
+                if preferred_son is None or newNode.evaluate() > preferred_son.evaluate():
                     prefered_son = newNode
-            node = prefered_son
-        return node
+            self = prefered_son
+        return self
     
     
     def expansion(self, state):
