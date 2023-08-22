@@ -29,7 +29,7 @@ Portanto, pode-se concluir que o Minimax sempre empata com o Minimax.
 ### Minimax vs Jogadas Perfeitas
 Foram realizadas 10 partidas entre o Minimax e as Jogadas Perfeitas do GamesmanUni e o resultado foram 10 empates.
 
-Portanto, pode-se concluir que o Minimax sempre empata com as Jogadas Perfeitas
+Portanto, pode-se concluir que o Minimax sempre empata com as Jogadas Perfeitas.
 
 ## Função customizada do Othello
 A heurística customizada adotada foi uma heurística de máscara criada por Kartik Kukreja, disponível neste [link](https://github.com/kartikkukreja/blog-codes/blob/master/src/Heuristic%20Function%20for%20Reversi%20(Othello).cpp).
