@@ -22,8 +22,8 @@ def make_move(state) -> Tuple[int, int]:
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
 
-    # Adota-se profundidade máxima de 10
-    return minimax_move(state, 10, evaluate_custom)
+    # Adota-se profundidade máxima de 4
+    return minimax_move(state, 4, evaluate_custom)
 
 
 # É adotada uma heurística de máscara customizada
