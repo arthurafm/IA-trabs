@@ -14,12 +14,12 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
     """
 
     def successors(s):
-        successorsSet = []
+        successorsList = []
 
         for move in s.legal_moves():
-            successorsSet.append((s.next_state(move), move))
+            successorsList.append((s.next_state(move), move))
 
-        return successorsSet
+        return successorsList
 
     def MAX(s, alpha, beta, depth):
         if s.is_terminal() or depth == max_depth:
